@@ -3,6 +3,7 @@ package com.aman.shiftmate
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.aman.shiftmate.data.SettingsRepository
 import com.aman.shiftmate.data.ShiftDatabase
 import com.aman.shiftmate.data.ShiftRepository
 import kotlinx.coroutines.CancellationException
@@ -14,12 +15,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// Placeholder rate until a settings screen lets the user enter their own
-private const val DEFAULT_HOURLY_RATE = 12.0
-
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = ShiftRepository(ShiftDatabase.getInstance(application).shiftDao())
+    private val settingsRepository = SettingsRepository(application)
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -48,8 +47,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun onClockToggle() {
         viewModelScope.launch {
             try {
-                if (_uiState.value.isClockedIn) repository.clockOut()
-                else repository.clockIn(DEFAULT_HOURLY_RATE)
+                if (_uiState.value.isClockedIn) {
+                    repository.clockOut()
+                } else {
+                    // The hourly rate comes from the user's profile
+                    repository.clockIn(settingsRepository.get().hourlyRate)
+                }
                 _uiState.update { it.copy(errorMessage = null) }
             } catch (e: Exception) {
                 if (e is CancellationException) throw e

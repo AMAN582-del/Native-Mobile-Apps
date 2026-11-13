@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun HomeScreen(
     onOpenHistory: () -> Unit,
+    onOpenProfile: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel()
 ) {
@@ -30,6 +31,7 @@ fun HomeScreen(
         state = state,
         onToggle = viewModel::onClockToggle,
         onOpenHistory = onOpenHistory,
+        onOpenProfile = onOpenProfile,
         modifier = modifier
     )
 }
@@ -40,6 +42,7 @@ fun HomeContent(
     state: HomeUiState,
     onToggle: () -> Unit,
     onOpenHistory: () -> Unit,
+    onOpenProfile: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -61,9 +64,9 @@ fun HomeContent(
             Text(if (state.isClockedIn) "Clock Out" else "Clock In")
         }
         Spacer(Modifier.height(16.dp))
-        OutlinedButton(onClick = onOpenHistory) {
-            Text("History")
-        }
+        OutlinedButton(onClick = onOpenHistory) { Text("History") }
+        Spacer(Modifier.height(8.dp))
+        OutlinedButton(onClick = onOpenProfile) { Text("Profile") }
         state.errorMessage?.let { message ->
             Spacer(Modifier.height(16.dp))
             Text(text = message, color = MaterialTheme.colorScheme.error)

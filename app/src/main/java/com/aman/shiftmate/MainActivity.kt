@@ -23,14 +23,17 @@ class MainActivity : ComponentActivity() {
             ShiftMateTheme {
                 val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // Navigation graph: Home -> History -> Shift detail
+                    // Navigation graph: Home -> History -> Shift detail, and Home -> Profile
                     NavHost(
                         navController = navController,
                         startDestination = "home",
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable("home") {
-                            HomeScreen(onOpenHistory = { navController.navigate("history") })
+                            HomeScreen(
+                                onOpenHistory = { navController.navigate("history") },
+                                onOpenProfile = { navController.navigate("profile") }
+                            )
                         }
                         composable("history") {
                             HistoryScreen(
@@ -44,6 +47,9 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("shiftId") { type = NavType.LongType })
                         ) {
                             ShiftDetailScreen(onBack = { navController.popBackStack() })
+                        }
+                        composable("profile") {
+                            ProfileScreen(onBack = { navController.popBackStack() })
                         }
                     }
                 }
