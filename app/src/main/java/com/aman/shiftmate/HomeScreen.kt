@@ -52,6 +52,10 @@ fun HomeContent(
         Button(onClick = onToggle) {
             Text(if (state.isClockedIn) "Clock Out" else "Clock In")
         }
+        state.errorMessage?.let { message ->
+            Spacer(Modifier.height(16.dp))
+            Text(text = message, color = MaterialTheme.colorScheme.error)
+        }
     }
 }
 
