@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,18 +21,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 // Stateful wrapper: owns the ViewModel and collects its state
 @Composable
 fun HomeScreen(
+    onOpenHistory: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    HomeContent(state = state, onToggle = viewModel::onClockToggle, modifier = modifier)
+    HomeContent(
+        state = state,
+        onToggle = viewModel::onClockToggle,
+        onOpenHistory = onOpenHistory,
+        modifier = modifier
+    )
 }
 
-// Stateless composable: receives state and an event callback (state hoisting)
+// Stateless composable: receives state and event callbacks (state hoisting)
 @Composable
 fun HomeContent(
     state: HomeUiState,
     onToggle: () -> Unit,
+    onOpenHistory: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -51,6 +59,10 @@ fun HomeContent(
         Spacer(Modifier.height(32.dp))
         Button(onClick = onToggle) {
             Text(if (state.isClockedIn) "Clock Out" else "Clock In")
+        }
+        Spacer(Modifier.height(16.dp))
+        OutlinedButton(onClick = onOpenHistory) {
+            Text("History")
         }
         state.errorMessage?.let { message ->
             Spacer(Modifier.height(16.dp))

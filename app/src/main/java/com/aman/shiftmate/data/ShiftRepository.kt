@@ -21,4 +21,8 @@ class ShiftRepository(private val dao: ShiftDao) {
         val open = dao.getOpenShift() ?: return
         dao.update(open.copy(endTime = System.currentTimeMillis()))
     }
+
+    suspend fun getShift(id: Long): Shift? = dao.getById(id)
+
+    suspend fun deleteShift(shift: Shift) = dao.delete(shift)
 }
