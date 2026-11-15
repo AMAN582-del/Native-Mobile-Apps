@@ -1,0 +1,22 @@
+{
+  "taxYear": "2026-27",
+  "restOfUk": [
+    { "from": 12570,  "to": 50270,  "rate": 0.20 },
+    { "from": 50270,  "to": 125140, "rate": 0.40 },
+    { "from": 125140, "to": null,   "rate": 0.45 }
+  ],
+  "scotland": [
+    { "from": 12570,  "to": 16537,  "rate": 0.19 },
+    { "from": 16537,  "to": 29526,  "rate": 0.20 },
+    { "from": 29526,  "to": 43662,  "rate": 0.21 },
+    { "from": 43662,  "to": 75000,  "rate": 0.42 },
+    { "from": 75000,  "to": 125140, "rate": 0.45 },
+    { "from": 125140, "to": null,   "rate": 0.48 }
+  ],
+  "nationalInsurance": {
+    "threshold": 12570,
+    "upperLimit": 50270,
+    "mainRate": 0.08,
+    "upperRate": 0.02
+  }
+}
