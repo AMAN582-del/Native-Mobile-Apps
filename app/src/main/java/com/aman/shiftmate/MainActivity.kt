@@ -4,11 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -17,6 +17,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -32,6 +33,7 @@ private data class Tab(val route: String, val label: String, val icon: ImageVect
 private val tabs = listOf(
     Tab("home", "Clock", Icons.Default.Home),
     Tab("history", "History", Icons.AutoMirrored.Filled.List),
+    Tab("summary", "Summary", Icons.Default.DateRange),
     Tab("profile", "Profile", Icons.Default.Person)
 )
 
@@ -48,7 +50,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
-                        // Only show the bar on the three main tabs, not on the detail screen
+                        // Only show the bar on the main tabs, not on the detail screen
                         if (tabs.any { it.route == currentRoute }) {
                             NavigationBar {
                                 tabs.forEach { tab ->
@@ -92,6 +94,9 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("shiftId") { type = NavType.LongType })
                         ) {
                             ShiftDetailScreen(onBack = { navController.popBackStack() })
+                        }
+                        composable("summary") {
+                            SummaryScreen()
                         }
                         composable("profile") {
                             ProfileScreen(onBack = { navController.popBackStack() })
