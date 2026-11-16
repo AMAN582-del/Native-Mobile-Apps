@@ -58,6 +58,7 @@ dependencies {
 
     // Multi-screen navigation (Topic 8)
     implementation("androidx.navigation:navigation-compose:2.9.0")
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
