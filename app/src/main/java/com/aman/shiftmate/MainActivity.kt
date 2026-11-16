@@ -122,10 +122,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable("home") {
-                            HomeScreen(
-                                onOpenHistory = { navController.navigate("history") },
-                                onOpenProfile = { navController.navigate("profile") }
-                            )
+                            HomeScreen()
                         }
                         composable("history") {
                             HistoryScreen(
