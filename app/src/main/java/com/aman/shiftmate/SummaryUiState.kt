@@ -1,6 +1,8 @@
 package com.aman.shiftmate
 
+import com.aman.shiftmate.data.RatesSource
 import com.aman.shiftmate.domain.PayResult
+import com.aman.shiftmate.domain.TaxRates
 import com.aman.shiftmate.model.TaxRegion
 
 /** Which period the Summary tab shows. */
@@ -15,6 +17,9 @@ data class SummaryUiState(
     val shiftCount: Int = 0,
     val result: PayResult = PayResult(0.0, 0.0, 0.0, 0.0),
     val taxRegion: TaxRegion = TaxRegion.ENGLAND_WALES_NI,
+    val ratesTaxYear: String = TaxRates.DEFAULT.taxYear,
+    val ratesSource: RatesSource = RatesSource.BUILT_IN,
+    val isRefreshingRates: Boolean = false,
     val isLoading: Boolean = true,
     val errorMessage: String? = null
 )

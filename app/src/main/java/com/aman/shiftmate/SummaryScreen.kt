@@ -12,6 +12,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +35,7 @@ fun SummaryScreen(
     SummaryContent(
         state = state,
         onPeriodSelected = viewModel::selectPeriod,
+        onRefreshRates = viewModel::refreshRates,
         modifier = modifier
     )
 }
@@ -42,6 +44,7 @@ fun SummaryScreen(
 fun SummaryContent(
     state: SummaryUiState,
     onPeriodSelected: (SummaryPeriod) -> Unit,
+    onRefreshRates: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val r = state.result
@@ -98,10 +101,19 @@ fun SummaryContent(
         }
 
         Text(
-            "Estimate only. Uses 2026-27 rates for ${state.taxRegion.label}. " +
+            "Estimate only. Uses ${state.ratesTaxYear} rates for ${state.taxRegion.label}. " +
                     "Student loan and other deductions are not included.",
             style = MaterialTheme.typography.bodySmall
         )
+
+        Text(
+            "Tax rates: ${state.ratesTaxYear} (${state.ratesSource.label})",
+            style = MaterialTheme.typography.bodySmall
+        )
+
+        OutlinedButton(onClick = onRefreshRates, enabled = !state.isRefreshingRates) {
+            Text(if (state.isRefreshingRates) "Refreshing…" else "Refresh tax rates")
+        }
 
         state.errorMessage?.let {
             Text(it, color = MaterialTheme.colorScheme.error)
@@ -110,6 +122,7 @@ fun SummaryContent(
 }
 
 @Composable
+
 private fun SummaryRow(label: String, value: String, bold: Boolean = false) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(label, fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal)

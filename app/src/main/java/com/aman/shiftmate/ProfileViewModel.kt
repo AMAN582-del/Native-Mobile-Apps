@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Locale
 
-// Everything the Profile screen needs to display
+/** Everything the Profile screen shows. */
 data class ProfileUiState(
     val name: String = "",
     val rateText: String = "",
@@ -22,38 +22,45 @@ data class ProfileUiState(
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = SettingsRepository(application)
+    private val settingsRepository = SettingsRepository(application)
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     init {
-        val settings = repository.get()
+        val s = settingsRepository.get()
         _uiState.value = ProfileUiState(
-            name = settings.name,
-            rateText = "%.2f".format(Locale.US, settings.hourlyRate),
-            taxRegion = settings.taxRegion
+            name = s.name,
+            rateText = String.format(Locale.US, "%.2f", s.hourlyRate),
+            taxRegion = s.taxRegion
         )
     }
 
-    fun onNameChange(value: String) =
-        _uiState.update { it.copy(name = value.take(40), saved = false) }
+    // Length limits stop absurdly long input
+    fun onNameChange(value: String) {
+        if (value.length <= 40) {
+            _uiState.update { it.copy(name = value, saved = false, errorMessage = null) }
+        }
+    }
 
-    fun onRateChange(value: String) =
-        _uiState.update { it.copy(rateText = value.take(8), saved = false, errorMessage = null) }
+    fun onRateChange(value: String) {
+        if (value.length <= 8) {
+            _uiState.update { it.copy(rateText = value, saved = false, errorMessage = null) }
+        }
+    }
 
-    fun onRegionChange(region: TaxRegion) =
-        _uiState.update { it.copy(taxRegion = region, saved = false) }
+    fun onRegionChange(region: TaxRegion) {
+        _uiState.update { it.copy(taxRegion = region, saved = false, errorMessage = null) }
+    }
 
     fun onSave() {
-        val state = _uiState.value
-        val rate = state.rateText.toDoubleOrNull()
-        // Input validation: reject empty, non-numeric or unrealistic rates
-        if (rate == null || rate <= 0.0 || rate > 500.0) {
-            _uiState.update { it.copy(errorMessage = "Enter a valid hourly rate, for example 12.50") }
+        val s = _uiState.value
+        val rate = s.rateText.trim().toDoubleOrNull()
+        if (rate == null || !rate.isFinite() || rate <= 0.0 || rate > 500.0) {
+            _uiState.update { it.copy(errorMessage = "Enter an hourly rate between 0.01 and 500.", saved = false) }
             return
         }
-        repository.save(UserSettings(name = state.name.trim(), hourlyRate = rate, taxRegion = state.taxRegion))
+        settingsRepository.save(UserSettings(s.name.trim(), rate, s.taxRegion))
         _uiState.update { it.copy(errorMessage = null, saved = true) }
     }
 }
